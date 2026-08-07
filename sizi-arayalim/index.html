@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sizi Arayalım - Kağıthane Çözüm Kurs</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; margin: 0; padding: 15px; }
+        .kurs-form-container { max-width: 480px; margin: 0 auto; background: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-top: 5px solid #d9232a; }
+        .kurs-title { color: #d9232a; text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 5px; }
+        .kurs-subtitle { text-align: center; color: #666; font-size: 13px; margin-bottom: 20px; }
+        
+        .kurs-form-grup { margin-bottom: 16px; }
+        .kurs-form-grup label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 13px; color: #333; }
+        .kurs-form-grup input, .kurs-form-grup select { width: 100%; padding: 11px; border: 1px solid #cccccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; transition: border 0.2s; }
+        .kurs-form-grup input:focus, .kurs-form-grup select:focus { border-color: #d9232a; outline: none; }
+        
+        .kurs-btn { background-color: #d9232a; color: #ffffff; border: none; padding: 13px; font-size: 15px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; transition: background 0.2s; margin-top: 5px; }
+        .kurs-btn:hover { background-color: #b51a20; }
+        .kurs-btn:disabled { background-color: #cccccc; cursor: not-allowed; }
+        
+        .kurs-loading { display: none; text-align: center; color: #d9232a; font-weight: bold; margin-top: 12px; font-size: 13px; }
+        .kurs-success { display: none; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 12px; border-radius: 6px; text-align: center; font-weight: bold; margin-top: 15px; font-size: 13px; }
+        .kurs-error { display: none; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 8px; border-radius: 6px; text-align: center; font-size: 12px; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="kurs-form-container">
+    <div class="kurs-title">Sizi Arayalım!</div>
+    <div class="kurs-subtitle">Detaylı bilgi ve eğitim danışmanlığımız için formu doldurun.</div>
+    
+    <form id="siziArayalimForm" onsubmit="window.kursGonder(event)">
+        <div class="kurs-form-grup">
+            <label>Ad Soyad</label>
+            <input type="text" id="adSoyad" required placeholder="Adınız ve soyadınız">
+        </div>
+        
+        <div class="kurs-form-grup">
+            <label>Telefon Numarası</label>
+            <input type="text" id="telefon" placeholder="05XX XXX XX XX" maxlength="14" oninput="window.kursTelFormat(this)" required>
+            <div class="kurs-error" id="telError">Lütfen 11 haneli telefon numaranızı eksiksiz giriniz.</div>
+        </div>
+
+        <div class="kurs-form-grup">
+            <label>Sınıf Seçiniz</label>
+            <select id="sinif" required>
+                <option value="" disabled selected>Sınıfınızı Seçin...</option>
+                <option value="7. Sınıf">7. Sınıf</option>
+                <option value="8. Sınıf">8. Sınıf</option>
+                <option value="11. Sınıf">11. Sınıf</option>
+                <option value="12. Sınıf">12. Sınıf</option>
+                <option value="Mezun">Mezun</option>
+            </select>
+        </div>
+
+        <button type="submit" class="kurs-btn" id="submitBtn">Beni Ara</button>
+        <div class="kurs-loading" id="loadingText">Talebiniz iletiliyor...</div>
+        <div class="kurs-success" id="successBanner">Talebiniz başarıyla alınmıştır! En kısa sürede sizi arayacağız.</div>
+    </form>
+</div>
+
+<script>
+    window.kursTelFormat = function(input) {
+        var num = input.value.replace(/\D/g, ''); 
+        if (num.length > 11) num = num.substring(0, 11); 
+        
+        var formated = "";
+        if (num.length > 0) {
+            formated += num.substring(0, 4); 
+            if (num.length > 4) {
+                formated += " " + num.substring(4, 7); 
+                if (num.length > 7) {
+                    formated += " " + num.substring(7, 9); 
+                    if (num.length > 9) {
+                        formated += " " + num.substring(9, 11); 
+                    }
+                }
+            }
+        }
+        input.value = formated;
+        document.getElementById('telError').style.display = 'none';
+    };
+
+    window.kursGonder = function(e) {
+        e.preventDefault();
+        
+        var telInput = document.getElementById('telefon');
+        var errBanner = document.getElementById('telError');
+        
+        if (telInput.value.length < 14) {
+            errBanner.style.display = 'block';
+            telInput.focus();
+            return false;
+        }
+        
+        var sBtn = document.getElementById('submitBtn');
+        var lText = document.getElementById('loadingText');
+        var sBanner = document.getElementById('successBanner');
+        
+        sBtn.disabled = true;
+        lText.style.display = 'block';
+        sBanner.style.display = 'none';
+        errBanner.style.display = 'none';
+
+        // GOOGLE APPS SCRIPT YENİ DEPLOY URL'SİNİ BURAYA YAPIŞTIR
+        var scriptURL = 'https://script.google.com/macros/s/AKfycbxxXH0CmkjCbZD3DZU7IxenXjSQsq2CwYisVnWHGo_7kmyuyEABKBrmCqlHJdIz48lQFA/exec';
+
+        var payload = {
+            adSoyad: document.getElementById('adSoyad').value,
+            telefon: telInput.value,
+            sinif: document.getElementById('sinif').value
+        };
+
+        fetch(scriptURL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+        
+        setTimeout(function() {
+            lText.style.display = 'none';
+            sBanner.style.display = 'block';
+            document.getElementById('siziArayalimForm').reset();
+            sBtn.disabled = false;
+            
+            setTimeout(function() {
+                sBanner.style.display = 'none';
+            }, 6000);
+        }, 1000);
+    };
+</script>
+
+</body>
+</html>
