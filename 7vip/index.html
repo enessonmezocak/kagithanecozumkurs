@@ -46,7 +46,7 @@
 
       <div class="form-group">
         <label for="phone">Telefon Numarası *</label>
-        <input type="tel" id="phone" name="phone" required placeholder="05XXXXXXXXX" maxlength="11">
+        <input type="tel" id="phone" name="phone" required placeholder="05XX XXX XX XX" maxlength="14">
       </div>
 
       <button type="submit" class="submit-btn" id="submitBtn">Ön Kayıt Başvurusunu Gönder</button>
@@ -60,9 +60,29 @@
     const form = document.getElementById('vipForm');
     const submitBtn = document.getElementById('submitBtn');
     const statusMsg = document.getElementById('statusMsg');
+    const phoneInput = document.getElementById('phone');
+
+    // Otomatik Telefon Formatlama (05XX XXX XX XX)
+    phoneInput.addEventListener('input', function(e) {
+      let raw = e.target.value.replace(/\D/g, '').substring(0, 11);
+      let match = raw.match(/^(\d{0,4})(\d{0,3})(\d{0,2})(\d{0,2})$/);
+      if (match) {
+        let formatted = match[1];
+        if (match[2]) formatted += ' ' + match[2];
+        if (match[3]) formatted += ' ' + match[3];
+        if (match[4]) formatted += ' ' + match[4];
+        e.target.value = formatted;
+      }
+    });
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
+
+      if (phoneInput.value.replace(/\D/g, '').length < 11) {
+        alert('Lütfen geçerli bir 11 haneli telefon numarası giriniz.');
+        return;
+      }
+
       submitBtn.disabled = true;
       submitBtn.innerText = 'Gönderiliyor...';
 
