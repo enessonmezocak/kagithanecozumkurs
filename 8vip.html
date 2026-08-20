@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>8. Sınıf VIP Kurs Ön Kayıt</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+    body { background-color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+    .form-card { background: #ffffff; width: 100%; max-width: 480px; padding: 30px; border-radius: 12px; box-shadow: 0 4px 18px rgba(0,0,0,0.08); border-top: 5px solid #0d2a4a; }
+    .form-title { text-align: center; color: #0d2a4a; font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .form-subtitle { text-align: center; color: #64748b; font-size: 14px; margin-bottom: 22px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 5px; }
+    input { width: 100%; padding: 12px; font-size: 14px; border: 1.5px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s ease; }
+    input:focus { border-color: #0d2a4a; box-shadow: 0 0 0 3px rgba(13, 42, 74, 0.1); }
+    .submit-btn { width: 100%; background: #0d2a4a; color: #ffffff; padding: 14px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s ease; margin-top: 10px; }
+    .submit-btn:hover { background: #164273; }
+    .submit-btn:disabled { background: #94a3b8; cursor: not-allowed; }
+    .status-msg { text-align: center; margin-top: 15px; font-size: 14px; font-weight: 600; display: none; padding: 10px; border-radius: 6px; }
+    .success { background-color: #dcfce7; color: #166534; }
+    .error { background-color: #fee2e2; color: #991b1b; }
+  </style>
+</head>
+<body>
+
+  <div class="form-card">
+    <h2 class="form-title">8. Sınıf VIP Kurs Ön Kayıt</h2>
+    <p class="form-subtitle">Tüm alanlar zorunludur. Danışmanlarımız kısa sürede dönüş sağlayacaktır.</p>
+
+    <form id="vipForm">
+      <div class="form-group">
+        <label for="studentName">Öğrenci Adı Soyadı *</label>
+        <input type="text" id="studentName" name="studentName" required placeholder="Örn: Ahmet Yılmaz">
+      </div>
+
+      <div class="form-group">
+        <label for="parentName">Veli Adı Soyadı *</label>
+        <input type="text" id="parentName" name="parentName" required placeholder="Örn: Mehmet Yılmaz">
+      </div>
+
+      <div class="form-group">
+        <label for="email">E-Posta Adresi *</label>
+        <input type="email" id="email" name="email" required placeholder="ornek@gmail.com">
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Telefon Numarası *</label>
+        <input type="tel" id="phone" name="phone" required placeholder="05XXXXXXXXX" maxlength="11">
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">Ön Kayıt Başvurusunu Gönder</button>
+      <div id="statusMsg" class="status-msg"></div>
+    </form>
+  </div>
+
+  <script>
+    // 1. Adımda kopyaladığınız Google Apps Script URL'sini buraya yapıştırın
+    const SCRIPT_URL = 'BURAYA_APPS_SCRIPT_URL_YAPISTIRIN';
+
+    const form = document.getElementById('vipForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const statusMsg = document.getElementById('statusMsg');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Gönderiliyor...';
+
+      const formData = new FormData(form);
+      formData.append('formType', '8. Sınıf VIP');
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors'
+      })
+      .then(() => {
+        statusMsg.innerText = 'Başvurunuz başarıyla iletildi. Teşekkür ederiz!';
+        statusMsg.className = 'status-msg success';
+        statusMsg.style.display = 'block';
+        form.reset();
+        submitBtn.innerText = 'Başvuru Gönderildi';
+      })
+      .catch(err => {
+        statusMsg.innerText = 'Bağlantı hatası oluştu, lütfen tekrar deneyin.';
+        statusMsg.className = 'status-msg error';
+        statusMsg.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Tekrar Dene';
+      });
+    });
+  </script>
+</body>
+</html>
